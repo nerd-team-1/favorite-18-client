@@ -1,3 +1,10 @@
+const mainColors = {
+  LIGHT_GREEN: '#82F802',
+  BLACK: '#0D0707',
+  GRAY: '#AEAEAE',
+  GRAY_FOOTER: '#342E2E',
+} as const;
+
 const colors = {
   PRIMARY_LIGHT: '#4374D9',
   PRIMARY: '#0054FF',
@@ -10,4 +17,4 @@ const colors = {
   BLACK: '#000',
 } as const;
 
-export {colors};
+export {mainColors, colors};
