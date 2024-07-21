@@ -11,4 +11,22 @@ type ResponseError = AxiosError<{
   error: string;
 }>;
 
-export type {RequestUser, ResponseError};
+interface ApiResponse<T> {
+  result: string;
+  data: T;
+  error: string | null;
+}
+
+interface Page {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+interface PageData<T> {
+  content: T[];
+  page: Page;
+}
+
+export type {RequestUser, ApiResponse, ResponseError, PageData};
