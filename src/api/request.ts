@@ -1,5 +1,5 @@
 const requests = {
-  fetchAuthLogin: '/open-api/auth/login',
+  fetchAuthLoginGoogleUrl: '/open-api/auth/login',
   fetchUserProfile: '/api/v1/user/me',
 };
 

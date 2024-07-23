@@ -1,9 +1,9 @@
+import {
+  QueryKey,
+  UseMutationOptions,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import {AxiosError} from 'axios';
-
-type RequestUser = {
-  email: string;
-  password: string;
-};
 
 type ResponseError = AxiosError<{
   statusCode: string;
@@ -29,4 +29,20 @@ interface PageData<T> {
   page: Page;
 }
 
-export type {RequestUser, ApiResponse, ResponseError, PageData};
+type UseMutationCustomOptions<TData = unknown, TVariables = unknown> = Omit<
+  UseMutationOptions<TData, ResponseError, TVariables, unknown>,
+  'mutationFn'
+>;
+
+type UseQueryCustomOptions<TQueryFnData = unknown, TData = TQueryFnData> = Omit<
+  UseQueryOptions<TQueryFnData, ResponseError, TData, QueryKey>,
+  'queryKey'
+>;
+
+export type {
+  ApiResponse,
+  ResponseError,
+  PageData,
+  UseMutationCustomOptions,
+  UseQueryCustomOptions,
+};
