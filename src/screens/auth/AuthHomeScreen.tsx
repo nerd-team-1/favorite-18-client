@@ -12,7 +12,7 @@ type AuthHomeScreenProps = StackScreenProps<
 >;
 
 function AuthHomeScreen({navigation}: AuthHomeScreenProps) {
-  const {authCode, userInfo, signIn} = useLoginGoogle();
+  const {isInProgress, signIn} = useLoginGoogle();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -25,7 +25,11 @@ function AuthHomeScreen({navigation}: AuthHomeScreenProps) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <GoogleSigninButton onPress={signIn} />
+        <GoogleSigninButton
+          onPress={signIn}
+          size={GoogleSigninButton.Size.Wide}
+          disabled={isInProgress}
+        />
       </View>
     </SafeAreaView>
   );

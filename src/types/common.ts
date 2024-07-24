@@ -5,6 +5,11 @@ import {
 } from '@tanstack/react-query';
 import {AxiosError} from 'axios';
 
+interface RefreshTokenInfo {
+  refreshToken: string;
+  refreshTokenExpiredAt: string;
+}
+
 type ResponseError = AxiosError<{
   statusCode: string;
   message: string;
@@ -40,8 +45,9 @@ type UseQueryCustomOptions<TQueryFnData = unknown, TData = TQueryFnData> = Omit<
 >;
 
 export type {
-  ApiResponse,
+  RefreshTokenInfo,
   ResponseError,
+  ApiResponse,
   PageData,
   UseMutationCustomOptions,
   UseQueryCustomOptions,

@@ -1,3 +1,20 @@
+interface BaseType {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UserProfile extends BaseType {
+  subid: string;
+  email: string;
+  name: string;
+  nickname: string | null;
+  birth: string | null;
+  thumbnail: string | null;
+  role: string;
+  status: string;
+}
+
 interface MachineCode {
   machineType: string;
   songCode: string;
@@ -17,4 +34,4 @@ interface Song extends MachineCode {
   updatedAt: string;
 }
 
-export type {Song, MachineCode};
+export type {UserProfile, Song, MachineCode};
