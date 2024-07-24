@@ -2,6 +2,7 @@ import {getSongs} from '@/api/song/song';
 import SearchInput from '@/components/common/SearchInput';
 import CustomButton from '@/components/CustomButton';
 import {colors} from '@/constants';
+import useAuth from '@/hooks/queries/useAuth';
 import {ApiResponse, PageData} from '@/types/common';
 import {Song} from '@/types/domain';
 import React, {useState} from 'react';
@@ -10,6 +11,7 @@ import {Keyboard, ScrollView, StyleSheet, Text, View} from 'react-native';
 interface SongHomeScreenProps {}
 
 function SongHomeScreen({}: SongHomeScreenProps) {
+  const {logoutMutation} = useAuth();
   const [keyword, setKeyword] = useState<string>('');
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -44,6 +46,12 @@ function SongHomeScreen({}: SongHomeScreenProps) {
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <CustomButton
+          label="로그아웃"
+          onPress={() => logoutMutation.mutate(null)}
+        />
+      </View>
       <SearchInput
         autoFocus
         value={keyword}
@@ -51,7 +59,9 @@ function SongHomeScreen({}: SongHomeScreenProps) {
         placeholder="검색할 노래를 입력하세요."
         onSubmit={() => Keyboard.dismiss()}
       />
-      <CustomButton label="검색" onPress={handleSongSearch} />
+      <View style={styles.buttonContainer}>
+        <CustomButton label="검색" onPress={handleSongSearch} />
+      </View>
 
       {loading && <Text>Loading...</Text>}
       {error && <Text>Error: {error}</Text>}
@@ -77,6 +87,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 40,
+  },
+  buttonContainer: {
+    paddingVertical: 10,
   },
   songContainer: {
     marginVertical: 10,

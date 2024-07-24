@@ -1,8 +1,10 @@
+import {ApiResponse} from '@/types/common';
 import instance from '../axios';
-import requests from '../request';
+import apiEndpoints from '../apiEndpoints';
+import {UserProfile} from '@/types/domain';
 
-const getProfile = async (): Promise<any> => {
-  const {data} = await instance.get(requests.fetchUserProfile);
+const getProfile = async (): Promise<ApiResponse<UserProfile>> => {
+  const {data} = await instance.get(apiEndpoints.fetchUserProfile);
 
   return data;
 };

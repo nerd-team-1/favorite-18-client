@@ -2,8 +2,9 @@ import {StackScreenProps} from '@react-navigation/stack';
 import React from 'react';
 import {Dimensions, Image, SafeAreaView, StyleSheet, View} from 'react-native';
 import {AuthStackParamList} from '@/navigations/stack/AuthStackNavigator';
-import CustomButton from '@/components/CustomButton';
 import {authNavigations} from '@/constants';
+import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
+import useLoginGoogle from '@/hooks/useLoginGoogle';
 
 type AuthHomeScreenProps = StackScreenProps<
   AuthStackParamList,
@@ -11,6 +12,8 @@ type AuthHomeScreenProps = StackScreenProps<
 >;
 
 function AuthHomeScreen({navigation}: AuthHomeScreenProps) {
+  const {isInProgress, signIn} = useLoginGoogle();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
@@ -22,14 +25,10 @@ function AuthHomeScreen({navigation}: AuthHomeScreenProps) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <CustomButton
-          label="로그인"
-          onPress={() => navigation.navigate(authNavigations.LOGIN)}
-        />
-        <CustomButton
-          label="회원가입"
-          variant="outlined"
-          onPress={() => navigation.navigate(authNavigations.SIGNUP)}
+        <GoogleSigninButton
+          onPress={signIn}
+          size={GoogleSigninButton.Size.Wide}
+          disabled={isInProgress}
         />
       </View>
     </SafeAreaView>
