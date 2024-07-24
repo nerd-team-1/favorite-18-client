@@ -1,4 +1,4 @@
-const requests = {
+const apiEndpoints = {
   fetchAuthGoogleLoginUrl: '/open-api/auth/login',
   fetchAuthLoginGoogle: '/open-api/auth/login/google',
   fetchAuthRefreshToken: '/api/auth/refresh-token',
@@ -7,4 +7,4 @@ const requests = {
   fetchSongs: '/api/v1/songs',
 };
 
-export default requests;
+export default apiEndpoints;
