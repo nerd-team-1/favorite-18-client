@@ -12,4 +12,8 @@ type RequestAuthLoginGoogle = {
   userInfo: UserInfo;
 };
 
-export type {UserInfo, RequestAuthLoginGoogle};
+type RequestUserUpdateNickname = {
+  nickname: string;
+};
+
+export type {UserInfo, RequestAuthLoginGoogle, RequestUserUpdateNickname};

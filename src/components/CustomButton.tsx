@@ -1,22 +1,15 @@
 import React from 'react';
-import {
-  Dimensions,
-  Pressable,
-  PressableProps,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {colors} from '../constants';
+import {Pressable, PressableProps, StyleSheet, Text, View} from 'react-native';
+import {colors, screen} from '../constants';
 
 interface CustomButtonProps extends PressableProps {
   label: string;
   variant?: 'filled' | 'outlined';
-  size?: 'large' | 'medium';
+  size?: 'large' | 'medium' | 'small';
   inValid?: boolean;
 }
 
-const deviceHeight = Dimensions.get('screen').height;
+const deviceHeight = screen.HEIGHT;
 
 function CustomButton({
   label,
@@ -52,10 +45,10 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   filled: {
-    backgroundColor: colors.PRIMARY,
+    backgroundColor: colors.GRAY_700,
   },
   filledPressed: {
-    backgroundColor: colors.PRIMARY_LIGHT,
+    backgroundColor: colors.GRAY_500,
   },
   filledText: {
     color: colors.WHITE,
@@ -85,6 +78,13 @@ const styles = StyleSheet.create({
   },
   medium: {
     width: '50%',
+    paddingVertical: deviceHeight > 700 ? 12 : 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  small: {
+    width: '30%',
     paddingVertical: deviceHeight > 700 ? 12 : 8,
     alignItems: 'center',
     justifyContent: 'center',
