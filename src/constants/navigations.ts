@@ -9,6 +9,7 @@ const mainNavigations = {
 
 const authNavigations = {
   AUTH_HOME: 'AuthHome',
+  SIGN_UP: 'SignUp',
 } as const;
 
 const songNavigations = {

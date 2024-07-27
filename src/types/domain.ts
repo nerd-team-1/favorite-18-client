@@ -10,6 +10,7 @@ interface UserProfile extends BaseType {
   name: string;
   nickname: string | null;
   birth: string | null;
+  gender: string | null;
   thumbnail: string | null;
   role: string;
   status: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Pressable, PressableProps, StyleSheet, Text, View} from 'react-native';
-import {colors, screen} from '../constants';
+import {colors, mainColors, screen} from '../constants';
 
 interface CustomButtonProps extends PressableProps {
   label: string;
@@ -54,16 +54,16 @@ const styles = StyleSheet.create({
     color: colors.WHITE,
   },
   outlined: {
-    borderColor: colors.PRIMARY,
+    borderColor: mainColors.LIGHT_GREEN,
     borderWidth: 1,
   },
   outlinedPressed: {
-    borderColor: colors.PRIMARY,
+    borderColor: mainColors.LIGHT_GREEN,
     borderWidth: 1,
     opacity: 0.5,
   },
   outlinedText: {
-    color: colors.PRIMARY,
+    color: mainColors.LIGHT_GREEN,
   },
   text: {
     fontSize: 16,

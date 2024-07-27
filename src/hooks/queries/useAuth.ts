@@ -1,4 +1,4 @@
-import {getAccessToken, loginGoogle, logout} from '@/api/auth/auth';
+import {getAccessToken, loginGoogle, logout, postSignup} from '@/api/auth/auth';
 import queryClient from '@/api/queryClient';
 import {getProfile, updateNickname} from '@/api/user/user';
 import {headerKeys, numbers, queryKeys, storageKeys} from '@/constants';
@@ -15,7 +15,15 @@ import {removeHeader, setHeader} from '@/utils/header';
 import {MutationFunction, useMutation, useQuery} from '@tanstack/react-query';
 import {useEffect} from 'react';
 
-// 로그인용 메소드
+// 회원가입 hook
+function useSignup(mutationOptions?: UseMutationCustomOptions) {
+  return useMutation({
+    mutationFn: postSignup,
+    ...mutationOptions,
+  });
+}
+
+// 로그인 용 메소드
 function useLogin<T>(
   loginAPI: MutationFunction<ApiResponse<ResponseJwt>, T>,
   mutationOptions?: UseMutationCustomOptions,
@@ -121,6 +129,7 @@ function useUpdateNickname(mutationOptions?: UseMutationCustomOptions) {
 }
 
 function useAuth() {
+  const signupMutation = useSignup();
   const loginGoogleMutation = useGoogleLogin();
   const refreshTokenQuery = useGetRefreshToken();
   const getProfileQuery = useGetProfile({
@@ -131,6 +140,7 @@ function useAuth() {
   const profileMutation = useUpdateNickname();
 
   return {
+    signupMutation,
     isLogin,
     loginGoogleMutation,
     getProfileQuery,
