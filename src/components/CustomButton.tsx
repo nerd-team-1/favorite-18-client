@@ -4,7 +4,7 @@ import {colors, mainColors, screen} from '../constants';
 
 interface CustomButtonProps extends PressableProps {
   label: string;
-  variant?: 'filled' | 'outlined';
+  variant?: 'filled' | 'outlined' | 'cancel';
   size?: 'large' | 'medium' | 'small';
   inValid?: boolean;
 }
@@ -64,6 +64,15 @@ const styles = StyleSheet.create({
   },
   outlinedText: {
     color: mainColors.LIGHT_GREEN,
+  },
+  cancel: {
+    backgroundColor: colors.RED_500,
+  },
+  cancelPressed: {
+    backgroundColor: colors.RED_300,
+  },
+  cancelText: {
+    color: colors.WHITE,
   },
   text: {
     fontSize: 16,
