@@ -4,12 +4,12 @@ const mainNavigations = {
   SURROUND: 'Surrond',
   MODEL: 'Model',
   QNA: 'Qna',
+  SETTING: 'Setting',
 } as const;
 
 const authNavigations = {
   AUTH_HOME: 'AuthHome',
-  LOGIN: 'Login',
-  SIGNUP: 'Signup',
+  SIGN_UP: 'SignUp',
 } as const;
 
 const songNavigations = {
@@ -38,6 +38,10 @@ const surrondTabNavigations = {
   SURROND_HOME: 'SurroundTabHome',
 } as const;
 
+const settingNavigations = {
+  EDIT_PROFILE: 'EditProfile',
+} as const;
+
 export {
   mainNavigations,
   authNavigations,
@@ -47,4 +51,5 @@ export {
   rankingTabNavigations,
   surroundNavigations,
   surrondTabNavigations,
+  settingNavigations,
 };

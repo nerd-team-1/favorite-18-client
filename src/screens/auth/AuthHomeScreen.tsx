@@ -1,8 +1,8 @@
 import {StackScreenProps} from '@react-navigation/stack';
 import React from 'react';
-import {Dimensions, Image, SafeAreaView, StyleSheet, View} from 'react-native';
+import {Image, SafeAreaView, StyleSheet, View} from 'react-native';
 import {AuthStackParamList} from '@/navigations/stack/AuthStackNavigator';
-import {authNavigations} from '@/constants';
+import {authNavigations, screen} from '@/constants';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 import useLoginGoogle from '@/hooks/useLoginGoogle';
 
@@ -11,7 +11,7 @@ type AuthHomeScreenProps = StackScreenProps<
   typeof authNavigations.AUTH_HOME
 >;
 
-function AuthHomeScreen({navigation}: AuthHomeScreenProps) {
+function AuthHomeScreen({}: AuthHomeScreenProps) {
   const {isInProgress, signIn} = useLoginGoogle();
 
   return (
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1.5,
-    width: Dimensions.get('screen').width / 2,
+    width: screen.WIDTH / 2,
   },
   image: {
     width: '100%',

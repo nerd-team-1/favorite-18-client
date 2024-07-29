@@ -1,10 +1,9 @@
-type UserInfo = {
-  id: string;
-  email: string;
-  name: string | null;
-  familyName: string | null;
-  givenName: string | null;
-  photo: string | null;
+import {UserInfo} from './common';
+
+type RequestAuthSignupGoogle = {
+  birth: string;
+  gender: string;
+  userInfo: UserInfo;
 };
 
 type RequestAuthLoginGoogle = {
@@ -12,4 +11,12 @@ type RequestAuthLoginGoogle = {
   userInfo: UserInfo;
 };
 
-export type {UserInfo, RequestAuthLoginGoogle};
+type RequestUserUpdateNickname = {
+  nickname: string;
+};
+
+export type {
+  RequestAuthSignupGoogle,
+  RequestAuthLoginGoogle,
+  RequestUserUpdateNickname,
+};

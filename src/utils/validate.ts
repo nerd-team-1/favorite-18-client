@@ -1,3 +1,7 @@
+function isBlank(value: string) {
+  return value.trim() === '';
+}
+
 type UserInformation = {
   email: string;
   password: string;
@@ -35,4 +39,16 @@ function validateSignup(values: UserInformation & {passwordConfirm: string}) {
   return signupErrors;
 }
 
-export {validateLogin, validateSignup};
+function validateEditProfile(values: {nickname: string}) {
+  const errors = {
+    nickname: '',
+  };
+
+  if (isBlank(values.nickname)) {
+    errors.nickname = '닉네임을 입력해주세요.';
+  }
+
+  return errors;
+}
+
+export {validateLogin, validateSignup, validateEditProfile};

@@ -5,6 +5,12 @@ import {
 import {useState} from 'react';
 import Config from 'react-native-config';
 import useAuth from './queries/useAuth';
+import {useNavigation} from '@react-navigation/native';
+import {authNavigations} from '@/constants';
+import {AuthStackParamList} from '@/navigations/stack/AuthStackNavigator';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type Navigation = StackNavigationProp<AuthStackParamList>;
 
 interface useLoginGoogleProps {
   error: string | null;
@@ -13,6 +19,7 @@ interface useLoginGoogleProps {
 }
 
 function useLoginGoogle(): useLoginGoogleProps {
+  const navigation = useNavigation<Navigation>();
   const {loginGoogleMutation} = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isInProgress, setIsInProgress] = useState<boolean>(false);
@@ -33,7 +40,19 @@ function useLoginGoogle(): useLoginGoogleProps {
         throw new Error('idToken is null');
       }
 
-      loginGoogleMutation.mutate({authCode, userInfo});
+      loginGoogleMutation.mutate(
+        {authCode, userInfo},
+        {
+          onError: (err: any) => {
+            if (err.response?.status === 400) {
+              navigation.navigate(authNavigations.SIGN_UP, {
+                authCode,
+                userInfo,
+              });
+            }
+          },
+        },
+      );
       setError(null);
     } catch (err: any) {
       if (err.code === statusCodes.SIGN_IN_CANCELLED) {

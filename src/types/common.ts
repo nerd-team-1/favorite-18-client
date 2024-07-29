@@ -5,6 +5,15 @@ import {
 } from '@tanstack/react-query';
 import {AxiosError} from 'axios';
 
+type UserInfo = {
+  id: string;
+  email: string;
+  name: string | null;
+  familyName: string | null;
+  givenName: string | null;
+  photo: string | null;
+};
+
 interface RefreshTokenInfo {
   refreshToken: string;
   refreshTokenExpiredAt: string;
@@ -45,6 +54,7 @@ type UseQueryCustomOptions<TQueryFnData = unknown, TData = TQueryFnData> = Omit<
 >;
 
 export type {
+  UserInfo,
   RefreshTokenInfo,
   ResponseError,
   ApiResponse,

@@ -1,6 +1,5 @@
 import React, {ForwardedRef, forwardRef, useRef} from 'react';
 import {
-  Dimensions,
   Pressable,
   StyleSheet,
   Text,
@@ -8,7 +7,7 @@ import {
   TextInputProps,
   View,
 } from 'react-native';
-import {colors} from '../constants';
+import {colors, screen} from '../constants';
 import {mergeRefs} from '../utils';
 
 interface CustomInputFieldProps extends TextInputProps {
@@ -17,7 +16,7 @@ interface CustomInputFieldProps extends TextInputProps {
   touched?: boolean;
 }
 
-const deviceHeight = Dimensions.get('screen').height;
+const deviceHeight = screen.HEIGHT;
 
 const CustomInputField = forwardRef(
   (
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderColor: colors.GRAY_200,
-    padding: deviceHeight > 700 ? 15 : 10,
+    paddingHorizontal: deviceHeight > 700 ? 17 : 14,
   },
   disabled: {
     backgroundColor: colors.GRAY_200,
@@ -69,7 +68,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 16,
-    color: colors.BLACK,
+    color: colors.WHITE,
     padding: 0,
   },
   inputError: {
@@ -79,7 +78,7 @@ const styles = StyleSheet.create({
   error: {
     color: colors.RED_500,
     fontSize: 12,
-    paddingTop: 5,
+    paddingBottom: 10,
   },
 });
 

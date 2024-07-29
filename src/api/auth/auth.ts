@@ -1,10 +1,26 @@
 import {ApiResponse, RefreshTokenInfo} from '@/types/common';
 import instance from '../axios';
-import {RequestAuthLoginGoogle} from '@/types/request';
+import {RequestAuthLoginGoogle, RequestAuthSignupGoogle} from '@/types/request';
 import {ResponseJwt} from '@/types/response';
 import {getEncryptStorage} from '@/utils/encryptStorage';
 import {storageKeys} from '@/constants';
 import apiEndpoints from '../apiEndpoints';
+import {UserProfile} from '@/types/domain';
+
+// 회원가입 API
+const postSignup = async ({
+  birth,
+  gender,
+  userInfo,
+}: RequestAuthSignupGoogle): Promise<UserProfile> => {
+  const {data} = await instance.post(apiEndpoints.fetchAuthSignupGoogle, {
+    birth,
+    gender,
+    userInfo,
+  });
+
+  return data;
+};
 
 // 구글 로그인 API
 const loginGoogle = async ({
@@ -39,4 +55,4 @@ const logout = async () => {
   await instance.post(apiEndpoints.fetchAuthLogout);
 };
 
-export {loginGoogle, getAccessToken, logout};
+export {postSignup, loginGoogle, getAccessToken, logout};

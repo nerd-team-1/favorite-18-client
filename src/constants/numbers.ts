@@ -4,7 +4,7 @@ let MINUTE = 1000 * 60;
 
 const screen = {
   WIDTH: Dimensions.get('screen').width,
-  HEOGHT: Dimensions.get('screen').height,
+  HEIGHT: Dimensions.get('screen').height,
 } as const;
 
 const numbers = {
