@@ -27,6 +27,7 @@ interface Song extends MachineCode {
   title: string;
   artist: string;
   albumUrl: string;
+  lyrics: string;
   scoreCompareUrl: string;
   machineCodes: MachineCode[];
   totalFavoriteCount: number;

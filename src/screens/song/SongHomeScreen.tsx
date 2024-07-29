@@ -1,95 +1,61 @@
-import {getSongs} from '@/api/song/song';
-import SearchInput from '@/components/common/SearchInput';
-import CustomButton from '@/components/CustomButton';
-import {colors} from '@/constants';
-import useAuth from '@/hooks/queries/useAuth';
-import {ApiResponse, PageData} from '@/types/common';
-import {Song} from '@/types/domain';
+import SongSearchField from '@/components/song/SongSearchField';
+import {alerts, colors, songNavigations} from '@/constants';
+import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
+import {SongStackParamList} from '@/navigations/stack/SongStackNavigator';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import React, {useState} from 'react';
-import {Keyboard, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Alert, SafeAreaView, StyleSheet} from 'react-native';
+
+type Navigation = CompositeNavigationProp<
+  StackNavigationProp<SongStackParamList>,
+  DrawerNavigationProp<MainDrawerParamList>
+>;
 
 interface SongHomeScreenProps {}
 
 function SongHomeScreen({}: SongHomeScreenProps) {
-  const {logoutMutation} = useAuth();
+  const navigation = useNavigation<Navigation>();
   const [keyword, setKeyword] = useState<string>('');
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   const handleChangeKeyword = (text: string) => {
     setKeyword(text);
   };
 
   const handleSongSearch = () => {
-    Keyboard.dismiss();
-
-    const fetchSongs = async () => {
-      try {
-        const response: ApiResponse<PageData<Song>> = await getSongs(keyword);
-        if (response.result === 'SUCCESS') {
-          setSongs(response.data.content);
-        } else {
-          setError(response.error);
-        }
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSongs();
-
-    console.log(songs);
+    if (keyword.trim() === '') {
+      return Alert.alert(
+        alerts.NO_KEYWORD.TITLE,
+        alerts.NO_KEYWORD.DESCRIPTION,
+      );
+    }
+    navigation.navigate(songNavigations.SONG_SEARCH_LIST, {
+      searchKeyword: keyword,
+    });
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          label="로그아웃"
-          onPress={() => logoutMutation.mutate(null)}
-        />
-      </View>
-      <SearchInput
-        autoFocus
+    <SafeAreaView style={styles.container}>
+      <SongSearchField
+        isAutoFocus={false}
+        isNeedRadius={true}
         value={keyword}
         onChangeText={handleChangeKeyword}
-        placeholder="검색할 노래를 입력하세요."
-        onSubmit={() => Keyboard.dismiss()}
+        onSubmit={handleSongSearch}
       />
-      <View style={styles.buttonContainer}>
-        <CustomButton label="검색" onPress={handleSongSearch} />
-      </View>
-
-      {loading && <Text>Loading...</Text>}
-      {error && <Text>Error: {error}</Text>}
-      {songs.map(song => (
-        <View key={song.songId} style={styles.songContainer}>
-          <Text style={styles.songText}>Title: {song.title}</Text>
-          <Text style={styles.songText}>Artist: {song.artist}</Text>
-          {song.machineCodes.map((code, index) => (
-            <View key={index}>
-              <Text style={styles.songText}>
-                Machine Type: {code.machineType}
-              </Text>
-              <Text style={styles.songText}>Song Code: {code.songCode}</Text>
-            </View>
-          ))}
-        </View>
-      ))}
-    </ScrollView>
+      {/* 랭킹데이터 추가 필요 */}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 40,
-  },
-  buttonContainer: {
-    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
   },
   songContainer: {
     marginVertical: 10,

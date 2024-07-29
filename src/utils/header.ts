@@ -12,4 +12,8 @@ function removeHeader(key: string) {
   delete instance.defaults.headers.common[key];
 }
 
-export {setHeader, removeHeader};
+function getHeader(key: string) {
+  return instance.defaults.headers.common[key];
+}
+
+export {setHeader, removeHeader, getHeader};

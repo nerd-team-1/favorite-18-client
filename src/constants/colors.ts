@@ -3,6 +3,8 @@ const mainColors = {
   BLACK: '#0D0707',
   GRAY: '#AEAEAE',
   GRAY_FOOTER: '#342E2E',
+  TJ: '#FFA500',
+  KY: '#4441DF',
 } as const;
 
 const colors = {
