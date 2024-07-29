@@ -1,6 +1,6 @@
-import {getAccessToken, loginGoogle, logout} from '@/api/auth/auth';
+import {getAccessToken, loginGoogle, logout, postSignup} from '@/api/auth/auth';
 import queryClient from '@/api/queryClient';
-import {getProfile} from '@/api/user/user';
+import {getProfile, updateNickname} from '@/api/user/user';
 import {headerKeys, numbers, queryKeys, storageKeys} from '@/constants';
 import {
   ApiResponse,
@@ -8,13 +8,22 @@ import {
   UseMutationCustomOptions,
   UseQueryCustomOptions,
 } from '@/types/common';
+import {UserProfile} from '@/types/domain';
 import {ResponseJwt} from '@/types/response';
 import {removeEncryptStorage, setEncryptStorage} from '@/utils/encryptStorage';
 import {removeHeader, setHeader} from '@/utils/header';
 import {MutationFunction, useMutation, useQuery} from '@tanstack/react-query';
 import {useEffect} from 'react';
 
-// 로그인용 메소드
+// 회원가입 hook
+function useSignup(mutationOptions?: UseMutationCustomOptions) {
+  return useMutation({
+    mutationFn: postSignup,
+    ...mutationOptions,
+  });
+}
+
+// 로그인 용 메소드
 function useLogin<T>(
   loginAPI: MutationFunction<ApiResponse<ResponseJwt>, T>,
   mutationOptions?: UseMutationCustomOptions,
@@ -83,7 +92,9 @@ function useGetRefreshToken() {
 }
 
 // 유저 정보 hook
-function useGetProfile(queryOptions?: UseQueryCustomOptions) {
+function useGetProfile(
+  queryOptions?: UseQueryCustomOptions<ApiResponse<UserProfile>>,
+) {
   return useQuery({
     queryKey: [queryKeys.AUTH, queryKeys.GET_PROFILE],
     queryFn: getProfile,
@@ -104,7 +115,21 @@ function useLogout(mutationOptions?: UseMutationCustomOptions) {
   });
 }
 
+function useUpdateNickname(mutationOptions?: UseMutationCustomOptions) {
+  return useMutation({
+    mutationFn: updateNickname,
+    onSuccess: newProfile => {
+      queryClient.setQueryData(
+        [queryKeys.AUTH, queryKeys.GET_PROFILE],
+        newProfile,
+      );
+    },
+    ...mutationOptions,
+  });
+}
+
 function useAuth() {
+  const signupMutation = useSignup();
   const loginGoogleMutation = useGoogleLogin();
   const refreshTokenQuery = useGetRefreshToken();
   const getProfileQuery = useGetProfile({
@@ -112,12 +137,15 @@ function useAuth() {
   });
   const isLogin = getProfileQuery.isSuccess;
   const logoutMutation = useLogout();
+  const profileMutation = useUpdateNickname();
 
   return {
+    signupMutation,
     isLogin,
     loginGoogleMutation,
     getProfileQuery,
     logoutMutation,
+    profileMutation,
   };
 }
 

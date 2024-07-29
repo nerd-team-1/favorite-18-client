@@ -1,19 +1,23 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {colors, mainColors, mainNavigations} from '@/constants';
+import {colors, mainColors, mainNavigations, screen} from '@/constants';
 import {NavigatorScreenParams} from '@react-navigation/native';
 import MainDrawerHeaderRight from '@/components/common/MainDrawerHeaderRight';
 import MainDrawerHeaderLeft from '@/components/common/MainDrawerHeaderLeft';
 import MainTabNavigator from '../tab/MainTabNavigator';
 import {SongStackParamList} from '../stack/SongStackNavigator';
-import {Dimensions} from 'react-native';
 import ModelHomeScreen from '@/screens/model/ModelHomeScreen';
 import QnaHomeScreen from '@/screens/qna/QnaHomeScreen';
+import SettingStackNavigator, {
+  SettingStackParamList,
+} from '../stack/SettingStackNavigator';
+import CustomDrawerContent from './CustomDrawerContent';
 
 export type MainDrawerParamList = {
   [mainNavigations.HOME]: NavigatorScreenParams<SongStackParamList>;
   [mainNavigations.MODEL]: undefined;
   [mainNavigations.QNA]: undefined;
+  [mainNavigations.SETTING]: NavigatorScreenParams<SettingStackParamList>;
 };
 
 const Drawer = createDrawerNavigator<MainDrawerParamList>();
@@ -21,6 +25,7 @@ const Drawer = createDrawerNavigator<MainDrawerParamList>();
 function MainDrawerNavigator() {
   return (
     <Drawer.Navigator
+      drawerContent={CustomDrawerContent}
       screenOptions={({navigation}) => ({
         headerTitle: '',
         headerStyle: {
@@ -30,7 +35,7 @@ function MainDrawerNavigator() {
         headerRight: () => MainDrawerHeaderRight(navigation),
         drawerType: 'front',
         drawerStyle: {
-          width: Dimensions.get('screen').width * 0.7,
+          width: screen.WIDTH * 0.7,
           backgroundColor: colors.BLACK,
         },
         drawerActiveTintColor: colors.BLACK,
@@ -62,6 +67,17 @@ function MainDrawerNavigator() {
         options={{
           title: '1:1 문의',
           swipeEnabled: false,
+        }}
+      />
+      <Drawer.Screen
+        name={mainNavigations.SETTING}
+        component={SettingStackNavigator}
+        options={{
+          title: '프로필 설정',
+          swipeEnabled: false,
+          drawerItemStyle: {
+            height: 0,
+          },
         }}
       />
     </Drawer.Navigator>

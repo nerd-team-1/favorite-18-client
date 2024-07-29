@@ -55,7 +55,9 @@ function TabBarIcons(route: RouteProp<MainTabParamList>, focused: boolean) {
 
 function MainTabNavigator() {
   return (
-    <Tab.Navigator tabBar={props => CustomTabBar(props)}>
+    <Tab.Navigator
+      initialRouteName={songTabNavigations.SONG_HOME}
+      tabBar={props => CustomTabBar(props)}>
       <Tab.Screen
         name={rankingTabNavigations.RANKING_HOME}
         component={RankingStackNavigator}
