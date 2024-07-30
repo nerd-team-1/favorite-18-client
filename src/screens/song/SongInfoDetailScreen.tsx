@@ -139,21 +139,26 @@ function SongInfoDetailScreen({route, navigation}: SongInfoDetailScreenProps) {
       <View style={styles.codeFavoriteContainer}>
         <View style={styles.machineContainer}>
           {song?.machineCodes.map(machineCode => {
-            return machineCode.machineType === 'TJ' ? (
-              <View style={styles.songCodeContainer}>
-                <View style={[styles.machineBox, styles.tjBox]}>
-                  <Text style={styles.machineType}>TJ</Text>
+            // Filter로 분류를 해봤으나, Style에서 Lint 경고가 지속 발생하여, IF문으로 변경하여 처리함.
+            if (
+              machineCode.machineType === 'KY' ||
+              machineCode.machineType === 'TJ'
+            ) {
+              return (
+                <View style={styles.songCodeContainer}>
+                  <View
+                    style={[
+                      styles.machineBox,
+                      styles[`${machineCode.machineType}Box`],
+                    ]}>
+                    <Text style={styles.machineType}>
+                      {machineCode.machineType === 'TJ' ? 'TJ' : '금영'}
+                    </Text>
+                  </View>
+                  <Text style={styles.songCode}>{machineCode.songCode}</Text>
                 </View>
-                <Text style={styles.songCode}>{machineCode.songCode}</Text>
-              </View>
-            ) : (
-              <View style={styles.songCodeContainer}>
-                <View style={[styles.machineBox, styles.kyBox]}>
-                  <Text style={styles.machineType}>금영</Text>
-                </View>
-                <Text style={styles.songCode}>{machineCode.songCode}</Text>
-              </View>
-            );
+              );
+            }
           })}
         </View>
         <SongFavoriteHeart
@@ -209,10 +214,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 15,
   },
-  tjBox: {
+  TJBox: {
     backgroundColor: mainColors.TJ,
   },
-  kyBox: {
+  KYBox: {
     backgroundColor: mainColors.KY,
   },
   machineType: {
