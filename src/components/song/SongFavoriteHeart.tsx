@@ -21,9 +21,14 @@ function SongFavoriteHeart({
   fontSize,
   onPressFavorite,
 }: SongFavoriteHeartProps) {
-  return song !== undefined ? (
+  return (
     <View style={styles.favorBox}>
-      <Pressable onPress={() => onPressFavorite(song)}>
+      <Pressable
+        onPress={() => {
+          if (song) {
+            onPressFavorite(song);
+          }
+        }}>
         {Boolean(isFavorite) && (
           <Ionicons name={'heart'} color={colors.RED_500} size={heartSize} />
         )}
@@ -36,24 +41,8 @@ function SongFavoriteHeart({
         )}
       </Pressable>
       <Text style={[styles.favoriteCount, {fontSize: fontSize}]}>
-        {totalFavoriteCount}
+        {totalFavoriteCount === undefined ? 0 : totalFavoriteCount}
       </Text>
-    </View>
-  ) : (
-    <View style={styles.favorBox}>
-      <Pressable>
-        {Boolean(isFavorite) && (
-          <Ionicons name={'heart'} color={colors.RED_500} size={heartSize} />
-        )}
-        {Boolean(!isFavorite) && (
-          <Ionicons
-            name={'heart-outline'}
-            color={colors.RED_500}
-            size={heartSize}
-          />
-        )}
-      </Pressable>
-      <Text style={[styles.favoriteCount, {fontSize: fontSize}]}>0</Text>
     </View>
   );
 }
