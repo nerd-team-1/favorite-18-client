@@ -3,10 +3,14 @@ import instance from '../axios';
 import {Song} from '@/types/domain';
 import apiEndpoints from '../apiEndpoints';
 
-const getSongs = async (
-  keyword: string,
-  page = 0,
-): Promise<ApiResponse<PageData<Song>>> => {
+type getSongsKeyWordProps = {
+  keyword: string;
+  page: number;
+};
+const getSongs = async ({
+  keyword,
+  page,
+}: getSongsKeyWordProps): Promise<ApiResponse<PageData<Song>>> => {
   const response = await instance.get(
     apiEndpoints.fetchSong + `?keyword=${keyword}&page=${page}`,
   );

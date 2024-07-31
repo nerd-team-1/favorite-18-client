@@ -1,11 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  alerts,
-  colors,
-  headerKeys,
-  mainColors,
-  songNavigations,
-} from '@/constants';
+import {alerts, colors, mainColors, songNavigations} from '@/constants';
 import {SongStackParamList} from '@/navigations/stack/SongStackNavigator';
 import {StackScreenProps} from '@react-navigation/stack';
 import {
@@ -17,15 +11,11 @@ import {
   View,
 } from 'react-native';
 import {Song} from '@/types/domain';
-import {getHeader} from '@/utils/header';
 import {ApiResponse} from '@/types/common';
-import {
-  addFavorite,
-  getFavorite,
-  getSong,
-  removeFavorite,
-} from '@/api/song/song';
 import SongFavoriteHeart from '@/components/song/SongFavoriteHeart';
+import useAuth from '@/hooks/queries/useAuth';
+import {useSongInfo} from '@/hooks/useSongInfo';
+import {useFavorite} from '@/hooks/queries/useFavorite';
 
 type SongInfoDetailScreenProps = StackScreenProps<
   SongStackParamList,
@@ -35,48 +25,35 @@ type SongInfoDetailScreenProps = StackScreenProps<
 function SongInfoDetailScreen({route, navigation}: SongInfoDetailScreenProps) {
   const {songId} = route.params;
   const [song, setSong] = useState<Song>();
-  const [error, setError] = useState<string | null>(null);
+  const {error, fetchSong} = useSongInfo();
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  const token = getHeader(headerKeys.AUTH_TOKEN);
+  const {isLogin} = useAuth();
+  const {
+    addFavoriteSongMutation,
+    removeFavoriteSongMutation,
+    getFavoriteSongsIdsMutation,
+  } = useFavorite();
 
-  const fetchSong = async () => {
-    if (songId === undefined) {
-      return Alert.alert(
-        alerts.SONG_SEARCH_ERROR.TITLE,
-        alerts.SONG_SEARCH_ERROR.DESCRIPTION,
-      );
-    }
-    try {
-      const response: ApiResponse<Song> = await getSong(songId);
+  useEffect(() => {
+    fetchSong(songId, (response: ApiResponse<Song>) => {
       if (response.result === 'SUCCESS') {
         setSong(response.data);
-      } else {
-        setError(response.error);
       }
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
 
-  const checkFavorite = async () => {
-    if (songId === undefined) {
-      return Alert.alert(
-        alerts.SONG_SEARCH_ERROR.TITLE,
-        alerts.SONG_SEARCH_ERROR.DESCRIPTION,
-      );
-    }
-    try {
-      const response: ApiResponse<number[]> = await getFavorite([songId]);
-      if (response.result === 'SUCCESS') {
-        setIsFavorite(response.data.includes(songId));
+      if (isLogin) {
+        getFavoriteSongsIdsMutation.mutate([songId], {
+          onSuccess: (favoriteResponse: ApiResponse<number[]>) => {
+            if (favoriteResponse.result === 'SUCCESS') {
+              setIsFavorite(favoriteResponse.data.includes(songId));
+            }
+          },
+        });
       }
-    } catch (err: any) {
-      setIsFavorite(false);
-    }
-  };
+    });
+  }, [songId]);
 
   const handleFavoritePress = (song: Song) => {
-    if (token === null) {
+    if (!isLogin) {
       return Alert.alert(
         alerts.NEED_LOGIN.TITLE,
         alerts.NEED_LOGIN.DESCRIPTION,
@@ -88,45 +65,25 @@ function SongInfoDetailScreen({route, navigation}: SongInfoDetailScreenProps) {
       setSong({...song, totalFavoriteCount: song.totalFavoriteCount - 1});
     } else {
       addFavoriteSong(songId);
-
       setSong({...song, totalFavoriteCount: song.totalFavoriteCount + 1});
     }
   };
 
-  const removeFavoriteSong = async (songId: number) => {
-    try {
-      const response: ApiResponse<void> = await removeFavorite(songId);
-      if (response.result === 'SUCCESS') {
+  const removeFavoriteSong = (songId: number) => {
+    removeFavoriteSongMutation.mutate(songId, {
+      onSuccess: () => {
         setIsFavorite(false);
-      }
-    } catch (err: any) {
-      return Alert.alert(
-        alerts.FAVORITE_REMOVE_ERROR.TITLE,
-        alerts.FAVORITE_REMOVE_ERROR.DESCRIPTION,
-      );
-    }
+      },
+    });
   };
 
-  const addFavoriteSong = async (songId: number) => {
-    try {
-      const response: ApiResponse<void> = await addFavorite(songId);
-      if (response.result === 'SUCCESS') {
+  const addFavoriteSong = (songId: number) => {
+    addFavoriteSongMutation.mutate(songId, {
+      onSuccess: () => {
         setIsFavorite(true);
-      }
-    } catch (err: any) {
-      return Alert.alert(
-        alerts.FAVORITE_ADD_ERROR.TITLE,
-        alerts.FAVORITE_ADD_ERROR.DESCRIPTION,
-      );
-    }
+      },
+    });
   };
-
-  useEffect(() => {
-    fetchSong();
-    if (token !== null) {
-      checkFavorite();
-    }
-  });
 
   return (
     <SafeAreaView style={styles.container}>

@@ -29,10 +29,9 @@ function SongFavoriteHeart({
             onPressFavorite(song);
           }
         }}>
-        {Boolean(isFavorite) && (
+        {Boolean(isFavorite) ? (
           <Ionicons name={'heart'} color={colors.RED_500} size={heartSize} />
-        )}
-        {Boolean(!isFavorite) && (
+        ) : (
           <Ionicons
             name={'heart-outline'}
             color={colors.RED_500}

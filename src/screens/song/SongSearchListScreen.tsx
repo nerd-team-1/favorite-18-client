@@ -1,18 +1,12 @@
 import React, {useCallback} from 'react';
-import {
-  addFavorite,
-  getFavorite,
-  getSongs,
-  removeFavorite,
-} from '@/api/song/song';
 import SongListInfo from '@/components/song/SongListInfo';
 import SongSearchField from '@/components/song/SongSearchField';
-import {alerts, headerKeys, songNavigations} from '@/constants';
+import {alerts, songNavigations} from '@/constants';
 import {SongStackParamList} from '@/navigations/stack/SongStackNavigator';
 import {ApiResponse, PageData} from '@/types/common';
 import {Song} from '@/types/domain';
 import {StackScreenProps} from '@react-navigation/stack';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -21,7 +15,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import {getHeader} from '@/utils/header';
+import useAuth from '@/hooks/queries/useAuth';
+import {useFavorite} from '@/hooks/queries/useFavorite';
+import {useSongInfo} from '@/hooks/useSongInfo';
 
 type SongSearchListScreenProps = StackScreenProps<
   SongStackParamList,
@@ -29,16 +25,23 @@ type SongSearchListScreenProps = StackScreenProps<
 >;
 
 function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
-  const {searchKeyword} = route.params;
+  const {searchKeyword, searchSongs, searchFavoriteSongs} = route.params;
   const [keyword, setKeyword] = useState<string>(String(searchKeyword));
-  const [songs, setSongs] = useState<Song[]>([]);
+  const [songs, setSongs] = useState<Song[]>(searchSongs);
+  const [favoriteSongs, setFavoriteSongs] =
+    useState<number[]>(searchFavoriteSongs);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState<number>(0);
-  const [favoriteSongs, setFavoriteSongs] = useState<number[]>([]);
-  const token = getHeader(headerKeys.AUTH_TOKEN);
+  const [error, setError] = useState<string | null>('');
+  const {
+    addFavoriteSongMutation,
+    removeFavoriteSongMutation,
+    getFavoriteSongsIdsMutation,
+  } = useFavorite();
+  const {isLogin} = useAuth();
+  const {fetchSongs} = useSongInfo();
 
-  const fetchSongs = useCallback(async () => {
+  const handleKeyword = () => {
     if (keyword.trim() === '') {
       return Alert.alert(
         alerts.NO_KEYWORD.TITLE,
@@ -46,35 +49,31 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
       );
     }
     setLoading(true);
-    try {
-      const response: ApiResponse<PageData<Song>> = await getSongs(
-        keyword,
-        page,
-      );
-      if (response.result === 'SUCCESS') {
-        const songList: Song[] = response.data.content;
-        setSongs(songList);
-
-        if (token !== null) {
-          const songIds: number[] = songList.map(song => song.songId);
-
-          const favoriteSongResponse: ApiResponse<number[]> = await getFavorite(
-            songIds,
-          );
-          if (favoriteSongResponse.result === 'SUCCESS') {
-            setFavoriteSongs(favoriteSongResponse.data);
+    fetchSongs(keyword, page, (songsResponse: ApiResponse<PageData<Song>>) => {
+      try {
+        if (songsResponse.result === 'SUCCESS') {
+          const songList: Song[] = songsResponse.data.content;
+          setSongs(songList);
+          if (isLogin) {
+            const songIds: number[] = songList.map(song => song.songId);
+            getFavoriteSongsIdsMutation.mutate(songIds, {
+              onSuccess: (favoriteResponse: ApiResponse<number[]>) => {
+                if (favoriteResponse.result === 'SUCCESS') {
+                  setFavoriteSongs(favoriteResponse.data);
+                }
+              },
+            });
           }
+        } else {
+          setError(songsResponse.error);
         }
-      } else {
-        setError(response.error);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [keyword]);
-
+    });
+  };
   const handleChangeKeyword = useCallback((text: string) => {
     setKeyword(text);
   }, []);
@@ -88,7 +87,7 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
   );
 
   const handleFavoritePress = (song: Song) => {
-    if (token === null) {
+    if (!isLogin) {
       return Alert.alert(
         alerts.NEED_LOGIN.TITLE,
         alerts.NEED_LOGIN.DESCRIPTION,
@@ -98,60 +97,42 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
     const {songId} = song;
     if (favoriteSongs.includes(songId)) {
       removeFavoriteSong(songId);
-
-      setSongs(
-        songs.map(s => {
-          if (s.songId === songId) {
-            return {...s, totalFavoriteCount: s.totalFavoriteCount - 1};
-          }
-          return s;
-        }),
-      );
     } else {
       addFavoriteSong(songId);
-
-      setSongs(
-        songs.map(s => {
-          if (s.songId === songId) {
-            return {...s, totalFavoriteCount: s.totalFavoriteCount + 1};
-          }
-          return s;
-        }),
-      );
     }
   };
 
-  const removeFavoriteSong = async (songId: number) => {
-    try {
-      const response: ApiResponse<void> = await removeFavorite(songId);
-      if (response.result === 'SUCCESS') {
+  const removeFavoriteSong = (songId: number) => {
+    removeFavoriteSongMutation.mutate(songId, {
+      onSuccess: () => {
         setFavoriteSongs(favoriteSongs.filter(id => id !== songId));
-      }
-    } catch (err: any) {
-      return Alert.alert(
-        alerts.FAVORITE_REMOVE_ERROR.TITLE,
-        alerts.FAVORITE_REMOVE_ERROR.DESCRIPTION,
-      );
-    }
+        setSongs(
+          songs.map(s => {
+            if (s.songId === songId) {
+              return {...s, totalFavoriteCount: s.totalFavoriteCount - 1};
+            }
+            return s;
+          }),
+        );
+      },
+    });
   };
 
-  const addFavoriteSong = async (songId: number) => {
-    try {
-      const response: ApiResponse<void> = await addFavorite(songId);
-      if (response.result === 'SUCCESS') {
+  const addFavoriteSong = (songId: number) => {
+    addFavoriteSongMutation.mutate(songId, {
+      onSuccess: () => {
         setFavoriteSongs([...favoriteSongs, songId]);
-      }
-    } catch (err: any) {
-      return Alert.alert(
-        alerts.FAVORITE_ADD_ERROR.TITLE,
-        alerts.FAVORITE_ADD_ERROR.DESCRIPTION,
-      );
-    }
+        setSongs(
+          songs.map(s => {
+            if (s.songId === songId) {
+              return {...s, totalFavoriteCount: s.totalFavoriteCount + 1};
+            }
+            return s;
+          }),
+        );
+      },
+    });
   };
-
-  useEffect(() => {
-    fetchSongs();
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -160,9 +141,7 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
         isNeedRadius={false}
         value={keyword}
         onChangeText={handleChangeKeyword}
-        onSubmit={() => {
-          fetchSongs();
-        }}
+        onSubmit={handleKeyword}
       />
       <ScrollView>
         {loading && (
@@ -176,7 +155,7 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
           </View>
         )}
         {songs.length > 0 &&
-          songs.map((song, index) => {
+          songs.map(song => {
             const isFavoriteSong = favoriteSongs.includes(song.songId);
             return (
               <SongListInfo

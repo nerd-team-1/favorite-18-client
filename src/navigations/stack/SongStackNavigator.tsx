@@ -4,10 +4,15 @@ import {createStackNavigator} from '@react-navigation/stack';
 import SongHomeScreen from '@/screens/song/SongHomeScreen';
 import SongInfoDetailScreen from '@/screens/song/SongInfoDetailScreen';
 import SongSearchListScreen from '@/screens/song/SongSearchListScreen';
+import {Song} from '@/types/domain';
 
 export type SongStackParamList = {
   [songNavigations.SONG_HOME]: undefined;
-  [songNavigations.SONG_SEARCH_LIST]: {searchKeyword: string};
+  [songNavigations.SONG_SEARCH_LIST]: {
+    searchKeyword: string;
+    songs: Song[];
+    favoriteSongs: number[];
+  };
   [songNavigations.SONG_DETAIL]: {songId: number};
 };
 

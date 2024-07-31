@@ -23,7 +23,7 @@ interface MachineCode {
   updatedAt: string;
 }
 
-interface Song extends MachineCode {
+interface Song {
   songId: number;
   title: string;
   artist: string;
