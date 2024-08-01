@@ -5,7 +5,9 @@ const apiEndpoints = {
   fetchAuthLogout: '/api/auth/logout',
   fetchUserProfile: '/api/v1/user/me',
   fetchUserUpdateNickname: '/api/v1/user/nickname',
-  fetchSongs: '/api/v1/songs',
+  fetchSong: '/api/v1/songs',
+  defaultFavorite: '/api/v1/like',
+  fetchConfirmLikeSong: '/api/v1/like/confirm',
 };
 
 export default apiEndpoints;

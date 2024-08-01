@@ -14,6 +14,8 @@ const authNavigations = {
 
 const songNavigations = {
   SONG_HOME: 'SongHome',
+  SONG_SEARCH_LIST: 'SongSerachList',
+  SONG_DETAIL: 'SongDetail',
 } as const;
 
 const songTabNavigations = {
