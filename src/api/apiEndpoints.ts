@@ -8,6 +8,7 @@ const apiEndpoints = {
   fetchSong: '/api/v1/songs',
   defaultFavorite: '/api/v1/like',
   fetchConfirmLikeSong: '/api/v1/like/confirm',
+  addSongRankCount: '/api/v1/rank/redis',
 };
 
 export default apiEndpoints;

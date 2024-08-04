@@ -67,6 +67,7 @@ function SongHomeScreen({}: SongHomeScreenProps) {
               } else {
                 searchFavoriteSongs = [];
               }
+
               navigateToSongSearchList(
                 keyword,
                 searchSongList,
@@ -88,31 +89,6 @@ function SongHomeScreen({}: SongHomeScreenProps) {
         );
       }
     });
-
-    // if (isLogin) {
-    //   const songIds: number[] = searchSongList.map(song => song.songId);
-    //   await fetchConfirmLikeSongIds(
-    //     songIds,
-    //     (favoriteResponse: ApiResponse<number[]>) => {
-    //       if (favoriteResponse.result === 'SUCCESS') {
-    //         searchFavoriteSongs = favoriteResponse.data;
-    //         console.log(
-    //           `SongHomeScreen FetchSongs Confirm FavoriteSongs >>> ${searchFavoriteSongs}`,
-    //         );
-    //       } else {
-    //         searchFavoriteSongs = [];
-    //       }
-    //     },
-    //   );
-    // }
-    // searchSongList = getSongListByKeyword();
-    // searchFavoriteSongs = getFavoriteSongsBySongIds(searchSongList);
-
-    // navigation.navigate(songNavigations.SONG_SEARCH_LIST, {
-    //   searchKeyword: keyword,
-    //   searchSongs: searchSongList,
-    //   searchFavoriteSongs: searchFavoriteSongs,
-    // });
   };
 
   return (

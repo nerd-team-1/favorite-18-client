@@ -18,6 +18,7 @@ import {
 import useAuth from '@/hooks/queries/useAuth';
 import {useFavorite} from '@/hooks/queries/useFavorite';
 import {useSongInfo} from '@/hooks/useSongInfo';
+import {addSongRankCount} from '@/api/rank/rank';
 
 type SongSearchListScreenProps = StackScreenProps<
   SongStackParamList,
@@ -81,6 +82,7 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
   const handleSongDetailPress = useCallback(
     (song: Song) => {
       const {songId} = song;
+      addSongRankCount(songId);
       navigation.navigate(songNavigations.SONG_DETAIL, {songId: songId});
     },
     [navigation],
