@@ -6,16 +6,18 @@ import MainDrawerHeaderRight from '@/components/common/MainDrawerHeaderRight';
 import MainDrawerHeaderLeft from '@/components/common/MainDrawerHeaderLeft';
 import MainTabNavigator from '../tab/MainTabNavigator';
 import {SongStackParamList} from '../stack/SongStackNavigator';
-import ModelHomeScreen from '@/screens/model/ModelHomeScreen';
 import QnaHomeScreen from '@/screens/qna/QnaHomeScreen';
 import SettingStackNavigator, {
   SettingStackParamList,
 } from '../stack/SettingStackNavigator';
 import CustomDrawerContent from './CustomDrawerContent';
+import ModelStackNavigator, {
+  ModelStackParamList,
+} from '../stack/ModelStackNavigator';
 
 export type MainDrawerParamList = {
   [mainNavigations.HOME]: NavigatorScreenParams<SongStackParamList>;
-  [mainNavigations.MODEL]: undefined;
+  [mainNavigations.MODEL]: NavigatorScreenParams<ModelStackParamList>;
   [mainNavigations.QNA]: undefined;
   [mainNavigations.SETTING]: NavigatorScreenParams<SettingStackParamList>;
 };
@@ -55,7 +57,7 @@ function MainDrawerNavigator() {
       />
       <Drawer.Screen
         name={mainNavigations.MODEL}
-        component={ModelHomeScreen}
+        component={ModelStackNavigator}
         options={{
           title: '점수분석',
           swipeEnabled: false,

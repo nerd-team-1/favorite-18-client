@@ -15,8 +15,20 @@ type RequestUserUpdateNickname = {
   nickname: string;
 };
 
+type RequestModelUpload = {
+  songId: string;
+};
+
+type RequestModelScore = {
+  modelScoreId: number;
+  originalFilename: string;
+  recordedFilename: string;
+};
+
 export type {
   RequestAuthSignupGoogle,
   RequestAuthLoginGoogle,
   RequestUserUpdateNickname,
+  RequestModelUpload,
+  RequestModelScore,
 };

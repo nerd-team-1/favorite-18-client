@@ -56,7 +56,7 @@ export function useAudioRecorder(fileName: string) {
         if (Platform.OS === 'android') {
           const externalPath = `${RNFS.ExternalDirectoryPath}/${fileName}.m4a`;
           await RNFS.moveFile(recordedFilePath, externalPath);
-          setRecordedFilePath(externalPath); // Update recordedFilePath to new location
+          setRecordedFilePath(externalPath);
         }
       } catch (error) {
         console.error('Stop recording error:', error);
