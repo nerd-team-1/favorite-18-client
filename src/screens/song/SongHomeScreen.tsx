@@ -1,7 +1,7 @@
 import SongSearchField from '@/components/song/SongSearchField';
 import {alerts, colors, songNavigations} from '@/constants';
 import useAuth from '@/hooks/queries/useAuth';
-import {useFavorite} from '@/hooks/queries/useFavorite';
+import useFavoriteInfo from '@/hooks/useFavoriteInfo';
 import {useSongInfo} from '@/hooks/useSongInfo';
 import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
 import {SongStackParamList} from '@/navigations/stack/SongStackNavigator';
@@ -25,15 +25,25 @@ function SongHomeScreen({}: SongHomeScreenProps) {
   const [keyword, setKeyword] = useState<string>('');
   const {fetchSongs} = useSongInfo();
   const {isLogin} = useAuth();
-  const {getFavoriteSongsIdsMutation} = useFavorite();
-  const [songList, setSongList] = useState<Song[]>([]);
-  const [favoriteSongs, setFavoriteSongs] = useState<number[]>([]);
+  const {fetchConfirmLikeSongIds} = useFavoriteInfo();
 
   const handleChangeKeyword = (text: string) => {
     setKeyword(text);
   };
 
-  const handleSongSearch = async () => {
+  const navigateToSongSearchList = (
+    searchKeyword: string,
+    searchSongs: Song[],
+    searchFavoriteSongs: number[],
+  ) => {
+    navigation.navigate(songNavigations.SONG_SEARCH_LIST, {
+      searchKeyword,
+      searchSongs,
+      searchFavoriteSongs,
+    });
+  };
+
+  const handleSongSearch = () => {
     if (keyword.trim() === '') {
       return Alert.alert(
         alerts.NO_KEYWORD.TITLE,
@@ -41,33 +51,68 @@ function SongHomeScreen({}: SongHomeScreenProps) {
       );
     }
 
+    let searchSongList: Song[] = [];
+    let searchFavoriteSongs: number[] = [];
+
     fetchSongs(keyword, 0, (songsResponse: ApiResponse<PageData<Song>>) => {
-      try {
-        if (songsResponse.result === 'SUCCESS') {
-          const songList = songsResponse.data.content;
-          setSongList(songsResponse.data.content);
-          if (isLogin) {
-            const songIds: number[] = songList.map(song => song.songId);
-            getFavoriteSongsIdsMutation.mutate(songIds, {
-              onSuccess: (favoriteResponse: ApiResponse<number[]>) => {
-                if (favoriteResponse.result === 'SUCCESS') {
-                  setFavoriteSongs(favoriteResponse.data);
-                }
-              },
-            });
-          }
+      if (songsResponse.result === 'SUCCESS') {
+        searchSongList = songsResponse.data.content;
+        if (isLogin) {
+          const songIds: number[] = searchSongList.map(song => song.songId);
+          fetchConfirmLikeSongIds(
+            songIds,
+            (favoriteResponse: ApiResponse<number[]>) => {
+              if (favoriteResponse.result === 'SUCCESS') {
+                searchFavoriteSongs = favoriteResponse.data;
+              } else {
+                searchFavoriteSongs = [];
+              }
+              navigateToSongSearchList(
+                keyword,
+                searchSongList,
+                searchFavoriteSongs,
+              );
+            },
+          );
+        } else {
+          navigateToSongSearchList(
+            keyword,
+            searchSongList,
+            searchFavoriteSongs,
+          );
         }
-      } catch (err: any) {
-        setSongList([]);
-        setFavoriteSongs([]);
-      } finally {
-        navigation.navigate(songNavigations.SONG_SEARCH_LIST, {
-          searchKeyword: keyword,
-          searchSongs: songList,
-          searchFavoriteSongs: favoriteSongs,
-        });
+      } else {
+        return Alert.alert(
+          alerts.SONG_SEARCH_ERROR.TITLE,
+          alerts.SONG_SEARCH_ERROR.DESCRIPTION,
+        );
       }
     });
+
+    // if (isLogin) {
+    //   const songIds: number[] = searchSongList.map(song => song.songId);
+    //   await fetchConfirmLikeSongIds(
+    //     songIds,
+    //     (favoriteResponse: ApiResponse<number[]>) => {
+    //       if (favoriteResponse.result === 'SUCCESS') {
+    //         searchFavoriteSongs = favoriteResponse.data;
+    //         console.log(
+    //           `SongHomeScreen FetchSongs Confirm FavoriteSongs >>> ${searchFavoriteSongs}`,
+    //         );
+    //       } else {
+    //         searchFavoriteSongs = [];
+    //       }
+    //     },
+    //   );
+    // }
+    // searchSongList = getSongListByKeyword();
+    // searchFavoriteSongs = getFavoriteSongsBySongIds(searchSongList);
+
+    // navigation.navigate(songNavigations.SONG_SEARCH_LIST, {
+    //   searchKeyword: keyword,
+    //   searchSongs: searchSongList,
+    //   searchFavoriteSongs: searchFavoriteSongs,
+    // });
   };
 
   return (
