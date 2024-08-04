@@ -10,8 +10,8 @@ export type SongStackParamList = {
   [songNavigations.SONG_HOME]: undefined;
   [songNavigations.SONG_SEARCH_LIST]: {
     searchKeyword: string;
-    songs: Song[];
-    favoriteSongs: number[];
+    searchSongs: Song[];
+    searchFavoriteSongs: number[];
   };
   [songNavigations.SONG_DETAIL]: {songId: number};
 };

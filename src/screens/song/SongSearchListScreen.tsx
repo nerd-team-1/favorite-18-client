@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import SongListInfo from '@/components/song/SongListInfo';
 import SongSearchField from '@/components/song/SongSearchField';
 import {alerts, songNavigations} from '@/constants';
@@ -7,17 +7,12 @@ import {ApiResponse, PageData} from '@/types/common';
 import {Song} from '@/types/domain';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useState} from 'react';
-import {
-  Alert,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Alert, FlatList, SafeAreaView, StyleSheet} from 'react-native';
 import useAuth from '@/hooks/queries/useAuth';
 import {useFavorite} from '@/hooks/queries/useFavorite';
 import {useSongInfo} from '@/hooks/useSongInfo';
+import {addSongRankCount} from '@/api/rank/rank';
+import useFavoriteInfo from '@/hooks/useFavoriteInfo';
 
 type SongSearchListScreenProps = StackScreenProps<
   SongStackParamList,
@@ -30,16 +25,13 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
   const [songs, setSongs] = useState<Song[]>(searchSongs);
   const [favoriteSongs, setFavoriteSongs] =
     useState<number[]>(searchFavoriteSongs);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string | null>('');
-  const {
-    addFavoriteSongMutation,
-    removeFavoriteSongMutation,
-    getFavoriteSongsIdsMutation,
-  } = useFavorite();
+  const {addFavoriteSongMutation, removeFavoriteSongMutation} = useFavorite();
   const {isLogin} = useAuth();
   const {fetchSongs} = useSongInfo();
+  const {fetchConfirmLikeSongIds} = useFavoriteInfo();
 
   const handleKeyword = () => {
     if (keyword.trim() === '') {
@@ -49,25 +41,32 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
       );
     }
     setLoading(true);
-    fetchSongs(keyword, page, (songsResponse: ApiResponse<PageData<Song>>) => {
+    setPage(0); //검색어 변경시 페이지 초기화
+
+    fetchSongs(keyword, 0, (songsResponse: ApiResponse<PageData<Song>>) => {
       try {
         if (songsResponse.result === 'SUCCESS') {
           const songList: Song[] = songsResponse.data.content;
           setSongs(songList);
           if (isLogin) {
             const songIds: number[] = songList.map(song => song.songId);
-            getFavoriteSongsIdsMutation.mutate(songIds, {
-              onSuccess: (favoriteResponse: ApiResponse<number[]>) => {
+            fetchConfirmLikeSongIds(
+              songIds,
+              (favoriteResponse: ApiResponse<number[]>) => {
                 if (favoriteResponse.result === 'SUCCESS') {
                   setFavoriteSongs(favoriteResponse.data);
                 }
               },
-            });
+            );
           }
         } else {
+          setSongs([]);
+          setFavoriteSongs([]);
           setError(songsResponse.error);
         }
       } catch (err: any) {
+        setSongs([]);
+        setFavoriteSongs([]);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -81,6 +80,7 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
   const handleSongDetailPress = useCallback(
     (song: Song) => {
       const {songId} = song;
+      addSongRankCount(songId);
       navigation.navigate(songNavigations.SONG_DETAIL, {songId: songId});
     },
     [navigation],
@@ -134,6 +134,53 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
     });
   };
 
+  const handleEndReached = () => {
+    try {
+      let newPage = page + 1;
+      setPage(newPage);
+      setLoading(true);
+      fetchSongs(
+        keyword,
+        newPage,
+        (songsResponse: ApiResponse<PageData<Song>>) => {
+          if (songsResponse.result === 'SUCCESS') {
+            const songList: Song[] = songsResponse.data.content;
+            setSongs([...songs, ...songList]);
+
+            if (isLogin) {
+              const songIds: number[] = songList.map(song => song.songId);
+              fetchConfirmLikeSongIds(
+                songIds,
+                (favoriteResponse: ApiResponse<number[]>) => {
+                  if (favoriteResponse.result === 'SUCCESS') {
+                    setFavoriteSongs([
+                      ...favoriteSongs,
+                      ...favoriteResponse.data,
+                    ]);
+                  }
+                },
+              );
+            }
+          }
+        },
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderItem = (song: Song) => {
+    const isFavoriteSong = favoriteSongs.includes(song.songId);
+    return (
+      <SongListInfo
+        song={song}
+        isFavorite={isFavoriteSong}
+        onPressSong={handleSongDetailPress}
+        onPressFavorite={handleFavoritePress}
+      />
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <SongSearchField
@@ -143,31 +190,13 @@ function SongSearchListScreen({route, navigation}: SongSearchListScreenProps) {
         onChangeText={handleChangeKeyword}
         onSubmit={handleKeyword}
       />
-      <ScrollView>
-        {loading && (
-          <View>
-            <Text>Loading...</Text>
-          </View>
-        )}
-        {error && (
-          <View>
-            <Text>{error}</Text>
-          </View>
-        )}
-        {songs.length > 0 &&
-          songs.map(song => {
-            const isFavoriteSong = favoriteSongs.includes(song.songId);
-            return (
-              <SongListInfo
-                key={song.songId}
-                song={song}
-                isFavorite={isFavoriteSong}
-                onPressSong={handleSongDetailPress}
-                onPressFavorite={handleFavoritePress}
-              />
-            );
-          })}
-      </ScrollView>
+      <FlatList
+        data={songs}
+        renderItem={item => renderItem(item.item)}
+        keyExtractor={item => item.songId.toString()}
+        onEndReachedThreshold={1} // 100% 스크롤이 내려가면 onEndReached 함수 호출
+        onEndReached={handleEndReached}
+      />
     </SafeAreaView>
   );
 }
