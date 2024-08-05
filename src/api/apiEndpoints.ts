@@ -11,8 +11,7 @@ const apiEndpoints = {
   uploadRecordFile: '/api/v1/model/record',
   uploadRecordFile2: '/api/v1/model/record/mobile',
   fetchModelScore: '/api/v1/model/score',
-  addSongRankCount: '/api/v1/rank/redis',
-  fetchRanking: '/api/v1/rank'
+  fetchRanking: '/api/v1/rank/redis',
 };
 
 export default apiEndpoints;

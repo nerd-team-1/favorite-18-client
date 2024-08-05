@@ -11,6 +11,7 @@ const queryKeys = {
   GET_SONG: 'getSong',
   GET_SONGS: 'getSongs',
   GET_MODEL_SCORE: 'getModelScore',
+  GET_RANKING: 'getRanking',
 };
 
 const storageKeys = {

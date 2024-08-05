@@ -26,13 +26,14 @@ const alerts = {
     TITLE: '랭킹 조회 오류',
     DESCRIPTION:
       '랭킹 조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-  AUDIO_PERMISSION: {
-    TITLE: '녹음 권한 허용이 필요합니다.',
-    DESCRIPTION: '설정 화면에서 녹음 권한을 허용해 주세요.',
-  },
-  READ_AUDIO_PERMISSION: {
-    TITLE: '파일 읽기 권한 허용이 필요합니다.',
-    DESCRIPTION: '설정 화면에서 파일 권한을 허용해 주세요.',
+    AUDIO_PERMISSION: {
+      TITLE: '녹음 권한 허용이 필요합니다.',
+      DESCRIPTION: '설정 화면에서 녹음 권한을 허용해 주세요.',
+    },
+    READ_AUDIO_PERMISSION: {
+      TITLE: '파일 읽기 권한 허용이 필요합니다.',
+      DESCRIPTION: '설정 화면에서 파일 권한을 허용해 주세요.',
+    },
   },
   LOCATION_PERMISSION: {
     TITLE: '위치 권한 허용이 필요합니다',
@@ -40,4 +41,4 @@ const alerts = {
   },
 };
 
-export { alerts };
+export {alerts};
