@@ -22,6 +22,7 @@ const audioSet: AudioSet = {
 export function useAudioRecorder(fileName: string) {
   const [recording, setRecording] = useState(false);
   const [recordedFilePath, setRecordedFilePath] = useState<string>('');
+  const [recordTime, setRecordTime] = useState('00:00.00');
 
   const audioRecorderPlayer = useMemo(() => new AudioRecorderPlayer(), []);
 
@@ -37,7 +38,9 @@ export function useAudioRecorder(fileName: string) {
       try {
         await audioRecorderPlayer.startRecorder(path, audioSet);
         audioRecorderPlayer.addRecordBackListener(e => {
-          // You can handle recording status here if needed
+          setRecordTime(
+            audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)),
+          );
         });
         setRecording(true);
       } catch (error) {
@@ -79,6 +82,7 @@ export function useAudioRecorder(fileName: string) {
 
   return {
     recording,
+    recordTime,
     recordedFilePath,
     startRecording,
     stopRecording,

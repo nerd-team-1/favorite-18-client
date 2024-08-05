@@ -40,6 +40,7 @@ const surrondTabNavigations = {
 
 const modelNavigations = {
   MODEL_HOME: 'ModelHome',
+  MODEL_SELECT: 'ModelSelect',
   MODEL_SCORE: 'ModelScore',
 } as const;
 

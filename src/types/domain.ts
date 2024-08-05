@@ -1,3 +1,5 @@
+import {SongDto} from './dto';
+
 interface BaseType {
   id: number;
   createdAt: string;
@@ -35,6 +37,15 @@ interface Song {
   createdAt: string;
   updatedAt: string;
 }
+
+interface ModelScore extends BaseType {
+  song: SongDto;
+  score: number;
+  tune: number;
+  similarity: number;
+}
+
+export type {UserProfile, Song, MachineCode, ModelScore};
 
 interface Ranking {
   rankId: number;
