@@ -1,15 +1,10 @@
+import ScoreHistory from '@/components/score/ScoreHistory';
 import {colors, mainColors, modelNavigations} from '@/constants';
 import {ModelStackParamList} from '@/navigations/stack/ModelStackNavigator';
 import {ResponseModelScore} from '@/types/response';
 import {StackScreenProps} from '@react-navigation/stack';
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 
 type ModelScoreScreenProps = StackScreenProps<
   ModelStackParamList,
@@ -49,15 +44,13 @@ function ModelScoreScreen({route}: ModelScoreScreenProps) {
           <Text style={styles.infoText}>AI 가 분석한 당신의 점수는,</Text>
           <View style={styles.scoreContainer}>
             <Text style={styles.scoreText}>{modelScore.score}</Text>
-            {/* <Text style={styles.scoreInfoText}>점</Text> */}
           </View>
           <View style={styles.scoreValueContainer}>
             <Text style={styles.scoreValueIcon}>😍</Text>
             <Text style={styles.scoreValueText}>엄청난 실력이시네요!</Text>
           </View>
-          <ScrollView style={styles.historyContainer}>
-            <Text style={styles.historyHeader}>내 점수 리스트</Text>
-          </ScrollView>
+          <Text style={styles.historyHeader}>내 점수 리스트</Text>
+          <ScoreHistory />
         </>
       ) : (
         <Text style={styles.text}>No data available</Text>
@@ -121,11 +114,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.GRAY_500,
   },
-  historyContainer: {
-    marginTop: 40,
+  scoreHistoryContainer: {
+    marginTop: 20,
   },
   historyHeader: {
+    width: '100%',
+    fontSize: 18,
+    marginTop: 12,
+    paddingLeft: 10,
+    paddingBottom: 10,
     color: mainColors.LIGHT_GREEN,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.GRAY_700,
   },
 });
 

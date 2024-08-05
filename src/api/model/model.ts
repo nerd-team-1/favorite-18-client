@@ -3,6 +3,7 @@ import apiEndpoints from '../apiEndpoints';
 import {ApiResponse} from '@/types/common';
 import {ResponseModelScore, ResponseModelUpload} from '@/types/response';
 import {RequestModelScore} from '@/types/request';
+import {ModelScore} from '@/types/domain';
 
 const uploadRecordFile = async (
   formData: any,
@@ -41,4 +42,15 @@ const getModelScore = async (
   return data;
 };
 
-export {uploadRecordFile, uploadRecordFile2, getModelScore};
+const getModelScoreHistory = async (): Promise<ApiResponse<ModelScore[]>> => {
+  const {data} = await instance.get(apiEndpoints.fetchModelScore);
+
+  return data;
+};
+
+export {
+  uploadRecordFile,
+  uploadRecordFile2,
+  getModelScore,
+  getModelScoreHistory,
+};
