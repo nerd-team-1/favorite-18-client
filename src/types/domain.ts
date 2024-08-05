@@ -36,4 +36,11 @@ interface Song {
   updatedAt: string;
 }
 
-export type {UserProfile, Song, MachineCode};
+interface Ranking {
+  rankId: number;
+  song: Song[];
+  rankDate: Date;
+  searchCnt: number;
+}
+
+export type { UserProfile, Song, MachineCode, Ranking };
