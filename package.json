@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@mj-studio/react-native-naver-map": "^1.0.4",
     "@react-native-firebase/app": "^20.3.0",
     "@react-native-firebase/auth": "^20.3.0",
     "@react-native-google-signin/google-signin": "^12.2.1",
