@@ -46,3 +46,12 @@ interface ModelScore extends BaseType {
 }
 
 export type {UserProfile, Song, MachineCode, ModelScore};
+
+interface Ranking {
+  rankId: number;
+  song: Song[];
+  rankDate: Date;
+  searchCnt: number;
+}
+
+export type { UserProfile, Song, MachineCode, Ranking };
