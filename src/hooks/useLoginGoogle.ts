@@ -32,7 +32,6 @@ function useLoginGoogle(): useLoginGoogleProps {
         offlineAccess: true,
         scopes: ['profile', 'email'],
       });
-
       await GoogleSignin.hasPlayServices();
       const {idToken: authCode, user: userInfo} = await GoogleSignin.signIn();
 
