@@ -22,6 +22,11 @@ const alerts = {
     DESCRIPTION:
       '즐겨찾기 추가 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
   },
+  RANK_SEARCH_ERROR: {
+    TITLE: '랭킹 조회 오류',
+    DESCRIPTION:
+      '랭킹 조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+  },
 };
 
-export {alerts};
+export { alerts };
