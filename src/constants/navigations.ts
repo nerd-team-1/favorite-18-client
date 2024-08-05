@@ -38,6 +38,11 @@ const surrondTabNavigations = {
   SURROND_HOME: 'SurroundTabHome',
 } as const;
 
+const modelNavigations = {
+  MODEL_HOME: 'ModelHome',
+  MODEL_SCORE: 'ModelScore',
+} as const;
+
 const settingNavigations = {
   EDIT_PROFILE: 'EditProfile',
 } as const;
@@ -51,5 +56,6 @@ export {
   rankingTabNavigations,
   surroundNavigations,
   surrondTabNavigations,
+  modelNavigations,
   settingNavigations,
 };

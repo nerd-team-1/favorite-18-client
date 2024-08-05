@@ -8,6 +8,9 @@ const apiEndpoints = {
   fetchSong: '/api/v1/songs',
   defaultFavorite: '/api/v1/like',
   fetchConfirmLikeSong: '/api/v1/like/confirm',
+  uploadRecordFile: '/api/v1/model/record',
+  uploadRecordFile2: '/api/v1/model/record/mobile',
+  fetchModelScore: '/api/v1/model/score',
   addSongRankCount: '/api/v1/rank/redis',
   fetchRanking: '/api/v1/rank'
 };
