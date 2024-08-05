@@ -78,3 +78,7 @@ yarn-error.log
 
 # google service
 /android/app/google-services.json
+
+# Android build
+/android/app/src/main/assets
+/android/app/src/main/res
