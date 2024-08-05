@@ -16,16 +16,22 @@ import {Text} from 'react-native-paper';
 //   DrawerNavigationProp<MainDrawerParamList>
 // >;
 
-function ModelHomeScreen() {
+function ModelHomeScreen({route}) {
+  const songId = route.params;
   const navigation = useNavigation<Navigation>();
   usePermission('AUDIO');
   usePermission('READ_AUDIO');
   const uploadRecord = useMutateUploadRecord();
   const getModelScore = useGetModelScore();
-  const [analysisSongId, setAnalysisSongId] = useState(72761);
+  const [analysisSongId, setAnalysisSongId] = useState(songId);
   const fileName = generateFilename();
-  const {recording, recordedFilePath, startRecording, stopRecording} =
-    useAudioRecorder(fileName);
+  const {
+    recording,
+    recordTime,
+    recordedFilePath,
+    startRecording,
+    stopRecording,
+  } = useAudioRecorder(fileName);
 
   const noRecordFile = !recordedFilePath;
 
@@ -73,7 +79,7 @@ function ModelHomeScreen() {
           : '버튼을 눌러 녹음을 진행하세요.'}
       </Text>
       <View style={styles.waveContainer} />
-      <Text style={styles.timeText}>01:30.42</Text>
+      <Text style={styles.timeText}>{recordTime}</Text>
       <Button
         title="점수 분석"
         onPress={() => handleModelAnalysis(analysisSongId, recordedFilePath)}
