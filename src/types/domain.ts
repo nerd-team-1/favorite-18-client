@@ -45,8 +45,6 @@ interface ModelScore extends BaseType {
   similarity: number;
 }
 
-export type {UserProfile, Song, MachineCode, ModelScore};
-
 interface Ranking {
   rankId: number;
   song: Song[];
@@ -54,4 +52,4 @@ interface Ranking {
   searchCnt: number;
 }
 
-export type { UserProfile, Song, MachineCode, Ranking };
+export type {UserProfile, Song, MachineCode, ModelScore, Ranking};

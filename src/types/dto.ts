@@ -5,4 +5,22 @@ interface SongDto {
   albumPictureUrl: string;
 }
 
-export type {SongDto};
+interface SongCodeDto {
+  machineType: string;
+  songCode: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface SongRankDto {
+  songId: number;
+  title: string;
+  artist: string;
+  albumUrl: string;
+  machineCodes: SongCodeDto[];
+  totalFavoriteCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type {SongDto, SongRankDto};

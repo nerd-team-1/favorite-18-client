@@ -1,3 +1,5 @@
+import {SongRankDto} from './dto';
+
 type ResponseJwt = {
   accessToken: string;
   accessTokenExpiredAt: string;
@@ -17,4 +19,14 @@ type ResponseModelScore = {
   similarity: number;
 };
 
-export type {ResponseJwt, ResponseModelUpload, ResponseModelScore};
+type ResponseRankScore = {
+  songRankDto: SongRankDto;
+  searchCount: number;
+};
+
+export type {
+  ResponseJwt,
+  ResponseModelUpload,
+  ResponseModelScore,
+  ResponseRankScore,
+};

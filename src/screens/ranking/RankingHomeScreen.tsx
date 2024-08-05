@@ -1,85 +1,49 @@
-import { alerts, colors } from '@/constants';
-import { useRanking } from '@/hooks/useRankList';
-import { ApiResponse, PageData } from '@/types/common';
-import { Ranking } from '@/types/domain';
-import { getDateWithSeperator } from '@/utils/date';
-//import { Picker } from '@react-native-picker/picker';
-import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, Image, StyleSheet, Text, View } from 'react-native';
-import Config from 'react-native-config';
-import { DataTable } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {colors, screen} from '@/constants';
+import useGetRankingList from '@/hooks/queries/useGetRankList';
+import React from 'react';
+import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 function RankingHomeScreen() {
-  const { fetchRanking } = useRanking();
-  const [ranking, setRanking] = useState<Ranking[]>();
-  const [selectedMachineType, setSelectedMachineType] = useState<string>('TJ');
-  console.log('랭킹', Config.TEST);
-
-  useEffect(() => {
-
-    fetchRanking(selectedMachineType, (rankingsResponse: ApiResponse<PageData<Ranking>>) => {
-      if (rankingsResponse.result === 'SUCCESS') {
-        setRanking(rankingsResponse.data.content);
-      } else {
-        setRanking([]);
-        Alert.alert(
-          alerts.RANK_SEARCH_ERROR.TITLE,
-          alerts.RANK_SEARCH_ERROR.DESCRIPTION,
-        );
-      }
-    });
-  }, [fetchRanking]);
+  const {data: rank} = useGetRankingList();
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.pickerContainer}>
-        {/* <Picker
-          selectedValue={selectedMachineType}
-          onValueChange={(itemValue) => setSelectedMachineType(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="TJ" value="TJ" />
-          <Picker.Item label="금영" value="KY" />
-        </Picker> */}
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={require('@/assets/icon-inverted-triangle.png')}
-            resizeMode="contain"
-          />
-        </View>
-      </View>
-      <DataTable>
-        {ranking?.map((rankItem) =>
-          rankItem.song.map((songItem, songIndex) => (
-            <DataTable.Row key={`${rankItem.rankId}-${songIndex}`}>
-              <DataTable.Cell>
+      <Text style={styles.infoText}>오늘의 조회수 랭킹 TOP 100</Text>
+      <FlatList
+        data={rank?.flat()}
+        renderItem={({item, index}) => (
+          <View style={styles.rankInfoContainer}>
+            <View style={styles.leftContainer}>
+              <View key={index} style={styles.imageContainer}>
                 <Image
-                  source={{ uri: songItem.albumUrl }}
                   style={styles.image}
+                  source={
+                    item.songRankDto.albumUrl
+                      ? {uri: item.songRankDto.albumUrl}
+                      : require('@/assets/album-default.png')
+                  }
+                  resizeMode="cover"
                 />
-              </DataTable.Cell>
-              <DataTable.Cell>
-                <Text style={styles.text}>{songItem.title}</Text>
-              </DataTable.Cell>
-              <DataTable.Cell>
-                <Text style={styles.text}>{songItem.artist}</Text>
-              </DataTable.Cell>
-              <DataTable.Cell>
-                {songItem.machineCodes
-                  .filter((machineItem) => machineItem.machineType === selectedMachineType)
-                  .map((filteredMachineItem, machineIndex) => (
-                    <Text key={`${filteredMachineItem.machineType}-${machineIndex}`} style={styles.text}>
-                      {filteredMachineItem.songCode}
-                    </Text>
-                  ))
-                }
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))
+              </View>
+              <Text style={styles.rankIndexText}>{index + 1}</Text>
+              <View style={styles.rankTitleContainer}>
+                <Text style={styles.rankTitleText}>
+                  {item.songRankDto.title}
+                </Text>
+                <Text style={styles.rankText}>{item.songRankDto.artist}</Text>
+              </View>
+            </View>
+            <View style={styles.countContainer}>
+              <Text style={styles.searchCountText}>View</Text>
+              <Text style={styles.searchCountText}>{item.searchCount}</Text>
+            </View>
+          </View>
         )}
-      </DataTable>
+        keyExtractor={(item, index) => String(index)}
+        numColumns={1}
+        contentContainerStyle={styles.contentContainer}
+      />
     </SafeAreaView>
   );
 }
@@ -87,46 +51,66 @@ function RankingHomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 10,
   },
-  tableRow: {
-    backgroundColor: colors.GRAY_700,
+  contentContainer: {
+    width: '100%',
+  },
+  infoText: {
+    marginTop: 10,
+    paddingVertical: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
     color: colors.WHITE,
-
+    textAlign: 'center',
+  },
+  rankInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.GRAY_700,
+  },
+  leftContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  imageContainer: {
+    width: screen.WIDTH / 6,
+    height: screen.WIDTH / 6,
+    marginRight: 10,
   },
   image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25, // 이미지 둥글게
-    marginRight: 8,
+    width: '100%',
+    height: '100%',
+    borderRadius: 2,
   },
-  pickerContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    padding: 10,
-  },
-  picker: {
-    height: 50,
-    width: '10%',
-    color: colors.WHITE, // 선택박스의 텍스트 색상 설정
-    backgroundColor: colors.WHITE,
-  },
-
-  text: {
+  rankIndexText: {
+    marginLeft: 5,
+    fontSize: 18,
     color: colors.WHITE,
   },
-  logoImage: {
-    transform: [{ translateX: -35 }, { translateY: -7 }],
-    width: '140%',
-    height: '140%',
+  rankTitleContainer: {
+    marginLeft: 12,
   },
-
-  imageContainer: {
-    flex: 1,
-    width: Dimensions.get('screen').width / 2,
-    backgroundColor: colors.WHITE,
+  rankTitleText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: colors.WHITE,
   },
-
+  rankText: {
+    color: colors.WHITE,
+  },
+  countContainer: {
+    alignItems: 'center',
+  },
+  searchCountText: {
+    marginRight: 15,
+    fontWeight: 'bold',
+    color: colors.WHITE,
+    textAlign: 'right',
+  },
 });
 
 export default RankingHomeScreen;
