@@ -8,7 +8,7 @@ import {
   request,
 } from 'react-native-permissions';
 
-type PermissionType = 'AUDIO' | 'READ_AUDIO';
+type PermissionType = 'AUDIO' | 'READ_AUDIO' | 'LOCATION';
 type PermissionOS = {
   [key in PermissionType]: Permission;
 };
@@ -16,11 +16,13 @@ type PermissionOS = {
 const androidPermissions: PermissionOS = {
   AUDIO: PERMISSIONS.ANDROID.RECORD_AUDIO,
   READ_AUDIO: PERMISSIONS.ANDROID.READ_MEDIA_AUDIO,
+  LOCATION: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
 };
 
 const iosPermissions: PermissionOS = {
   AUDIO: PERMISSIONS.IOS.MICROPHONE,
   READ_AUDIO: PERMISSIONS.IOS.MICROPHONE,
+  LOCATION: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
 };
 
 function usePermission(type: PermissionType) {
