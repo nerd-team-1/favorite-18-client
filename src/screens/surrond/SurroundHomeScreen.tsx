@@ -1,21 +1,26 @@
-import {colors} from '@/constants';
+import {NaverMapView} from '@mj-studio/react-native-naver-map';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import Config from 'react-native-config';
 
 function SurrondHomeScreen() {
   console.log('env.test', Config.TEST);
 
   return (
-    <View>
-      <Text style={styles.text}>지도 스크린</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <NaverMapView style={styles.mapViewContainer} />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  text: {
-    color: colors.WHITE,
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapViewContainer: {
+    flex: 1,
   },
 });
 
